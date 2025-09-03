@@ -5,9 +5,14 @@ import com.bus.reservation.dto.LoginResponse;
 import com.bus.reservation.dto.RegisterRequest;
 import com.bus.reservation.dto.UserResponse;
 import com.bus.reservation.entity.User;
+import com.bus.reservation.service.JwtService;
 import com.bus.reservation.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -17,13 +22,19 @@ import java.net.URI;
 public class AuthController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest req) {
+    public ResponseEntity<LoginResponse> register(@RequestBody RegisterRequest req) {
         if (userService.findByEmail(req.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -31,23 +42,39 @@ public class AuthController {
         user.setName(req.getName());
         user.setEmail(req.getEmail());
         user.setPhone(req.getPhone());
-        user.setPassword(req.getPassword()); // Plaintext for now (no JWT)
+        user.setPassword(passwordEncoder.encode(req.getPassword()));
         user.setRole("CUSTOMER");
         user = userService.save(user);
 
-        UserResponse res = toUserResponse(user);
-        return ResponseEntity.created(URI.create("/api/v1/users/" + res.getId())).body(res);
+        var userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .roles(user.getRole())
+                .build();
+        String token = jwtService.generateToken(userDetails);
+
+        LoginResponse lr = new LoginResponse();
+        lr.setUser(toUserResponse(user));
+        lr.setToken(token);
+        return ResponseEntity.created(URI.create("/api/v1/users/" + user.getId())).body(lr);
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
-        User user = userService.findByEmail(req.getEmail()).orElse(null);
-        if (user == null || user.getPassword() == null || !user.getPassword().equals(req.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
+
+        User user = userService.findByEmail(req.getEmail()).orElseThrow();
+        var userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .roles(user.getRole())
+                .build();
+        String token = jwtService.generateToken(userDetails);
+
         LoginResponse lr = new LoginResponse();
         lr.setUser(toUserResponse(user));
-        lr.setMessage("OK");
+        lr.setToken(token);
         return ResponseEntity.ok(lr);
     }
 
