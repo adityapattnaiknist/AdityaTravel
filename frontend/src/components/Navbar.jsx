@@ -10,9 +10,9 @@ export default function Navbar() {
   const isAuthScreen = location.pathname === '/login' || location.pathname === '/register';
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg">
       <div className="container-fluid">
-        <Link className="navbar-brand" to={isAuthScreen ? '/login' : (isAdmin ? '/admin/trips' : '/search')}>BusRes</Link>
+        <Link className="navbar-brand" to={isAuthScreen ? '/login' : (isAdmin ? '/admin/trips' : '/search')}>ADITYA TOUR AND TRAVELS</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -36,16 +36,16 @@ export default function Navbar() {
           <div className="d-flex gap-2">
             {!isAuthScreen && user ? (
               <>
-                <span className="navbar-text text-light me-2">{isAdmin ? 'Hello Admin' : `Hello ${user.name || user.email}`}</span>
+                <span className="navbar-text me-2">{isAdmin ? 'Hello Admin' : `Hello ${user.name || user.email}`}</span>
                 <button
-                  className="btn btn-outline-light btn-sm"
+                  className="btn btn-outline-secondary btn-sm"
                   onClick={() => { logout(); navigate('/login'); }}
                 >Logout</button>
               </>
             ) : (
               <>
-                <Link className="btn btn-outline-light btn-sm" to="/login">Login</Link>
-                <Link className="btn btn-warning btn-sm" to="/register">Register</Link>
+                <Link className="btn btn-outline-primary btn-sm" to="/login">Login</Link>
+                <Link className="btn btn-primary btn-sm" to="/register">Register</Link>
               </>
             )}
           </div>

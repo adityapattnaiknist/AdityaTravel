@@ -1,0 +1,92 @@
+body {
+  background-color: #f0f2f5;
+  font-family: 'Roboto', sans-serif;
+}
+
+.navbar {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #333 !important;
+}
+
+.nav-link {
+  color: #555 !important;
+}
+
+.nav-link:hover {
+  color: #000 !important;
+}
+
+.btn-primary {
+    background-color: #ff6f61;
+    border-color: #ff6f61;
+}
+
+.btn-primary:hover {
+    background-color: #e65a50;
+    border-color: #e65a50;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #333;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #ff6f61;
+    box-shadow: 0 0 0 0.2rem rgba(255, 111, 97, 0.25);
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.table thead {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    border-top: none;
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+    color: #333;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-radius: 8px;
+}
+
+.table td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.table td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
